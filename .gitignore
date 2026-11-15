@@ -1,0 +1,52 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+# generated native folders
+/ios
+/android
+
+# 비밀 키 (커밋 금지). 템플릿은 .env.example
+.env
+
+# 음성 샘플(들어 보기용, 커밋 안 함)
+assets/audio-samples/
+
+# 앱스토어 미리보기 확인용 큰 이미지(다시 만들 수 있음)
+docs/store-previews/pair-check*.png
+docs/store-previews/header-search/_check-*.png
+docs/store-previews/header-search/_raw-*.png
