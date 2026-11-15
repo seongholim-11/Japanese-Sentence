@@ -111,3 +111,17 @@ eas submit --platform ios --latest
 - 알림 문구는 고정이에요. 백업은 복사·붙여넣기 방식이에요. 안드로이드는 출시 준비를 하지 않았어요.
 - 한자 쓰기(필기·획순)는 지원하지 않아요.
 - Google Cloud TTS의 요금·무료 한도·결과물 사용 조건은 공식 문서에서 직접 확인하지 못했어요(`docs/LICENSES-RESEARCH.md`).
+
+## 부록. 스크린샷 크기별 폴더 (업로드 오류 "파일 크기가 유효하지 않습니다" 대응)
+
+App Store Connect는 **칸마다 허용 크기가 정해져 있어요.** 올리려는 칸의 안내 문구를 보고 아래 폴더에서 고르세요(모두 알파 채널 없는 RGB PNG, 6장씩).
+
+| 칸 | 폴더 (크기) |
+| --- | --- |
+| iPhone 6.9형 | `iphone-6.9` (1320×2868), `iphone-6.9-1290x2796` |
+| iPhone 6.5형 | `iphone-6.5-1284x2778`, `iphone-6.5-1242x2688` |
+| iPhone 6.3형 | `iphone-6.3-1206x2622` |
+| iPad 13형 | `ipad-13` (2064×2752) |
+| iPad 12.9형 | `ipad-12.9-2048x2732` |
+
+모두 `docs/store-previews/` 아래에 있어요. 허용 크기는 Apple이 바꿀 수 있으니 칸의 안내가 최종 기준이에요. 변환 스크립트: `docs/store-previews/src/resize.cjs`.

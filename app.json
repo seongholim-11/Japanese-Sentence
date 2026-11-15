@@ -61,6 +61,12 @@
     ],
     "experiments": {
       "baseUrl": "/Japanese-Sentence"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "85bcd9c0-c464-442d-9a7b-8aa38dc4c317"
+      }
+    },
+    "owner": "seongholim"
   }
 }
