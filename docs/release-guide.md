@@ -2,28 +2,37 @@
 
 코드와 문구는 준비가 끝났어요. 아래는 **직접 하셔야 하는 단계**를 순서대로 적은 거예요. 확인한 것과 못 한 것을 구분해 두었어요. (영어 앱 출시 가이드를 일본어 앱 기준으로 다시 썼어요.)
 
-## 0. 현재 상태
+## 0. 현재 상태 (2026-11-15 다시 실행해 확인함)
 
 | 항목 | 상태 |
 | --- | --- |
-| 타입 검사(`npm run typecheck`) | 통과(확인함) |
-| 콘텐츠 검증(`npm run validate`) | 오류 0건(확인함) |
-| 앱 로직 검증(`npm run test:scripts`) | 통과(확인함) |
-| 웹 번들 로컬 실행(`npx expo start --web`) | 홈 화면 렌더링 확인함. 학습·퀴즈·대화문 전체 점검은 `reports/final-check.md` 참고 |
-| `expo-doctor`, iOS 번들 | `reports/final-check.md`에 결과 기록 |
-| 앱 이름 / Bundle ID | 링고루프 일본어 / `com.damadu.lingoloop.ja` (등록 때 사용 가능 여부 확인 필요) |
-| 개인정보처리방침 / 지원 | `https://seongholim-11.github.io/Japanese-Sentence/privacy/`, `.../support/` — **새 GitHub 저장소 `Japanese-Sentence`를 만들고 Pages를 켜야 열려요(아직 안 함)** |
-| 스토어 문구 | `docs/store-listing.md` (`node scripts/check-store.cjs`로 글자 수 통과) |
-| 스크린샷·미리보기 이미지 | iPhone 6.9형 6장(1320×2868) 제작함 → `docs/store-previews/iphone-6.9/`. **웹 캡처라 상태바가 없어요**: TestFlight 실기기 캡처로 바꾸는 편이 안전. iPad·헤더 이미지는 아직 없음(3절) |
-| 음성 | `reports/audio-report.md` 참고 |
-| 직접 확인 못 한 것 | 실기기 동작 전부, iOS 빌드·서명·업로드, 앱스토어 이름 중복, 음성 청취 품질 |
+| 타입 검사 / 콘텐츠 검증 / 앱 로직 테스트 / 스토어 문구 | 모두 통과 (가나 208 · 단어 2,521 · 문형·표현 212 · 문장 850 · 대화문 82편) |
+| 음성 | 7,264개, 누락·빈 파일·고아·경로 오류 0, 약 48.8MB (`reports/audio-report.md`) |
+| `expo-doctor` | 20/20 통과. iOS 번들 내보내기 성공 (`reports/final-check.md`) |
+| 로컬 웹 | 홈·가나·단어 카드·퀴즈·대화문·기록 화면 렌더링 확인 (캡처 스크립트로 6개 화면 촬영) |
+| 앱 이름 / Bundle ID | 링고루프 일본어 / `com.damadu.lingoloop.ja` — **App Store Connect에서 사용 가능 여부 확인 필요** |
+| 버전 / 빌드 번호 | `1.0.0`, 빌드 번호는 `eas.json`의 `autoIncrement`로 자동 증가. `eas init` 전이라 프로젝트 ID는 아직 없음 |
+| GitHub 저장소 / Pages | 완료: https://github.com/seongholim-11/Japanese-Sentence (공개, `main` 푸시됨), 배포 성공 |
+| 개인정보처리방침 / 지원 URL | 열림 확인(200): https://seongholim-11.github.io/Japanese-Sentence/privacy/ , .../support/ |
+| 스토어 문구 | `docs/store-listing.md` (글자 수 통과) |
+| 스크린샷·미리보기 | iPhone 6.9형 6장(1320×2868) `docs/store-previews/iphone-6.9/`, iPad 13형 6장(2064×2752) `docs/store-previews/ipad-13/`. 웹 캡처 합성이라 상태바가 없음. **헤더·검색 결과·유니버설 이미지는 없음** |
+| 직접 확인 못 한 것 | 실기기 동작 전부, iOS 빌드·서명·업로드, 앱스토어 이름 중복, **음성 청취 품질**(음성은 Aoede/Charon 임시 지정), Google Cloud TTS 요금·약관 |
+
+### 남은 일 (순서대로)
+
+1. (직접) Apple Developer 로그인 → App Store Connect 앱 등록(2절)
+2. (직접) `eas init` → `eas build --platform ios --profile production` → `eas submit` (4절). `eas init`이 `app.json`에 프로젝트 ID를 추가하면 커밋·푸시
+3. (직접) TestFlight 실기기 점검(5절). 가능하면 실기기 캡처로 스크린샷 교체
+4. (직접) 음성 청취: 한 글자 가나 23개(짧은 파일), 다의 읽기 문장, 대화문 A/B 목소리. 샘플 `assets/audio-samples/Aoede/` (`npm run audio -- --sample=N`)
+5. (요청 시 제작) 헤더·검색 결과·유니버설 이미지: 업로드 칸이 요구하는 크기를 알려 주세요
+6. 심사 제출(6절)
 
 ## 1. 계정 준비 (먼저 시작하세요)
 
 1. Apple Developer Program 가입(영어 앱에서 쓴 계정 그대로 사용). 로그인·결제는 직접 하세요.
 2. https://appstoreconnect.apple.com 에서 약관 동의 후 "앱" 메뉴 확인.
 3. EAS CLI: `npm install -g eas-cli` 후 `eas login`.
-4. GitHub에 새 저장소 `Japanese-Sentence`를 만들고 푸시, Settings > Pages > Source: GitHub Actions. (`.github/workflows/pages.yml`이 `site/` 폴더만 배포해요. 앱 웹 버전은 올리지 않아요.)
+4. GitHub 저장소와 Pages는 **이미 완료**됐어요(`.github/workflows/pages.yml`이 `site/` 폴더만 배포, 앱 웹 버전은 올리지 않음).
 
 ## 2. 앱 등록 (App Store Connect)
 
@@ -46,7 +55,8 @@
 
 ## 3. 스크린샷·미리보기
 
-규격(2026-11 기준 알려진 값, **업로드 칸이 요구하는 크기를 App Store Connect에서 다시 확인**): iPhone 6.9형 1320×2868, iPad 13형 2064×2752, 헤더 3840×1646, 검색 결과 3840×2560, 유니버설 5244×2950(PNG, 알파 없음). 이미지는 HTML/CSS + 실제 앱 캡처 합성으로 만들고, 한글·일본어 글자는 AI 이미지 생성기로 그리지 않는 방식을 권장해요(영어 앱과 동일). 웹 캡처에는 상태바가 없으니 TestFlight 실기기 캡처로 바꾸는 편이 안전해요. 일본어가 보이는 화면(읽기 표시, 대화문, 퀴즈, 가나)을 중심으로 고르세요.
+만든 것: iPhone 6.9형 6장, iPad 13형 6장(위 0절 경로). 재생성은 `node docs/store-previews/src/capture.cjs`(웹 서버 `npx expo start --web --port 8099` 필요) 후 `node docs/store-previews/src/build.cjs`(iPad는 `ipad` 인자).
+규격(2026-11 기준 알려진 값, **업로드 칸이 요구하는 크기를 App Store Connect에서 다시 확인**): iPhone 6.9형 1320×2868, iPad 13형 2064×2752, 헤더 3840×1646, 검색 결과 3840×2560, 유니버설 5244×2950(PNG, 알파 없음). 헤더·검색 결과·유니버설은 아직 없어요. 웹 캡처에는 상태바가 없으니 TestFlight 실기기 캡처로 바꾸는 편이 안전해요. 한글·일본어 글자는 AI 이미지 생성기로 그리지 않고 HTML 글꼴로 얹었어요.
 
 ## 4. 빌드와 업로드 (Windows에서도 가능)
 
