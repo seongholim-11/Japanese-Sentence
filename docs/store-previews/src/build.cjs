@@ -16,6 +16,9 @@ const FONTS = [
 const icon = b64(path.join(ROOT, 'assets', 'icon.png'), 'image/png');
 const shotOf = (n) => b64(path.join(SP, 'screens', n + '.png'), 'image/png');
 const RED = '#D93A4C';
+const IPAD = process.argv[2] === 'ipad';
+const W = IPAD ? 2064 : 1320, H = IPAD ? 2752 : 2868, K = IPAD ? 1.33 : 1;
+const OUTDIR = IPAD ? 'ipad-13' : 'iphone-6.9';
 
 const slides = [
   { id: '01-loop', dark: true, a: '한 번 보고 끝내지 말고', b: '다시 돌려 보세요', sub: '가나부터 N3까지, 일본어 회독 앱', shot: '03-study' },
@@ -27,24 +30,24 @@ const slides = [
 ];
 
 const page = (s) => `<!doctype html><html><head><meta charset="utf-8"><style>${FONTS}
-*{box-sizing:border-box}html,body{margin:0;width:1320px;height:2868px;overflow:hidden}
+*{box-sizing:border-box}html,body{margin:0;width:${W}px;height:${H}px;overflow:hidden}
 body{font-family:KR,JP,sans-serif;-webkit-font-smoothing:antialiased}
-.stage{position:relative;width:1320px;height:2868px;overflow:hidden;background:${s.dark ? `linear-gradient(155deg,${RED} 0%,#c02a3d 50%,#8f1a2b 100%)` : '#F6F3F1'};color:${s.dark ? '#fff' : '#2b1215'}}
-h1{position:absolute;top:150px;left:60px;width:1200px;margin:0;text-align:center;font-size:112px;line-height:1.3;font-weight:700;letter-spacing:-4px}
+.stage{position:relative;width:${W}px;height:${H}px;overflow:hidden;background:${s.dark ? `linear-gradient(155deg,${RED} 0%,#c02a3d 50%,#8f1a2b 100%)` : '#F6F3F1'};color:${s.dark ? '#fff' : '#2b1215'}}
+h1{position:absolute;top:${IPAD ? 120 : 150}px;left:60px;width:${W - 120}px;margin:0;text-align:center;font-size:${Math.round(112 * (IPAD ? 1.1 : 1))}px;line-height:1.3;font-weight:700;letter-spacing:-4px}
 h1 span,h1 strong{display:block;white-space:nowrap}h1 strong{color:${s.dark ? '#ffe3e6' : RED}}
-p{position:absolute;top:470px;left:60px;width:1200px;margin:0;text-align:center;font-size:44px;font-weight:400;color:${s.dark ? '#ffe3e6' : '#7a5a5e'}}
-.phone{position:absolute;left:190px;top:640px;width:940px;padding:19px;border:4px solid #8b8d96;border-radius:128px;background:#101114;box-shadow:0 50px 90px #0003}
+p{position:absolute;top:${IPAD ? 420 : 470}px;left:60px;width:${W - 120}px;margin:0;text-align:center;font-size:${IPAD ? 50 : 44}px;font-weight:400;color:${s.dark ? '#ffe3e6' : '#7a5a5e'}}
+.phone{position:absolute;left:${(W - (IPAD ? 1060 : 940)) / 2}px;top:${IPAD ? 560 : 640}px;width:${IPAD ? 1060 : 940}px;padding:19px;border:4px solid #8b8d96;border-radius:128px;background:#101114;box-shadow:0 50px 90px #0003}
 .phone img.screen{display:block;width:100%;border-radius:105px}
 .ic{position:absolute;right:70px;top:60px;width:110px;height:110px;border-radius:26px;display:${s.dark ? 'none' : 'block'}}
 </style></head><body><div class="stage"><h1><span>${s.a}</span><strong>${s.b}</strong></h1><p>${s.sub}</p><div class="phone"><img class="screen" src="${shotOf(s.shot)}"></div></div></body></html>`;
 
 const tmp = path.join(require('os').tmpdir(), 'jp-previews');
 fs.mkdirSync(tmp, { recursive: true });
-fs.mkdirSync(path.join(SP, 'iphone-6.9'), { recursive: true });
+fs.mkdirSync(path.join(SP, OUTDIR), { recursive: true });
 for (const s of slides) {
   const html = path.join(tmp, s.id + '.html');
   fs.writeFileSync(html, page(s));
-  const out = path.join(SP, 'iphone-6.9', s.id + '.png');
-  execFileSync(CHROME, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--window-size=1320,2868', '--force-device-scale-factor=1', `--screenshot=${out}`, 'file:///' + html.split(path.sep).join('/')], { stdio: 'ignore', timeout: 90000 });
+  const out = path.join(SP, OUTDIR, s.id + '.png');
+  execFileSync(CHROME, ['--headless=new', '--disable-gpu', '--hide-scrollbars', `--window-size=${W},${H}`, '--force-device-scale-factor=1', `--screenshot=${out}`, 'file:///' + html.split(path.sep).join('/')], { stdio: 'ignore', timeout: 90000 });
   console.log('만듦', s.id);
 }
