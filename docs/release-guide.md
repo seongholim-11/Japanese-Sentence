@@ -125,3 +125,17 @@ App Store Connect는 **칸마다 허용 크기가 정해져 있어요.** 올리�
 | iPad 12.9형 | `ipad-12.9-2048x2732` |
 
 모두 `docs/store-previews/` 아래에 있어요. 허용 크기는 Apple이 바꿀 수 있으니 칸의 안내가 최종 기준이에요. 변환 스크립트: `docs/store-previews/src/resize.cjs`.
+
+## 부록 2. 심사 중 새 빌드 올리기 (2026-11-20 기준)
+
+2026-11-16 Apple이 "추가 정보 필요(2.1)"로 회신했어요(거절 아님). 답변 문구와 화면 녹화 순서는 `docs/review-notes.md`에 있어요.
+그 뒤 바뀐 점: 가나를 분류 8세트로 나눔, 뜻 보기 내용을 버튼 위로 이동, 거의 빈 소리였던 짧은 음성 46개 재생성, 대화문 제목 한글화, 재생 중 말풍선 테두리 잘림 수정.
+
+순서(Apple 로그인이 필요한 단계는 직접):
+
+1. `eas build --platform ios --profile production` → 끝나면 빌드 번호가 자동으로 올라가요(`appVersionSource: remote`). 버전은 `1.0.0` 그대로 두면 돼요.
+2. `eas submit --platform ios --latest` → App Store Connect에서 "처리 중"이 끝날 때까지 기다려요(보통 10~30분, 메일이 와요).
+3. TestFlight(내부 테스트 그룹에 본인과 새 빌드 추가)에서 실기기로 설치해 **화면 녹화**를 찍어요(순서는 `docs/review-notes.md`).
+4. App Store Connect > 앱 버전 > "빌드"에서 **새 빌드를 선택**하고, 앱 심사 정보 > 메모에 `docs/review-notes.md`의 영문 블록을 붙인 뒤 다시 제출해요.
+
+확인 못 한 것: 실기기 동작, 새 가나 세트 화면, 수정한 음성의 실제 발음, `expo` 패치 버전 차이 1건(`npx expo install --check`로 확인, 빌드엔 영향 없음).
