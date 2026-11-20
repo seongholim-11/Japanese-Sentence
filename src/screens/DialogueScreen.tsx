@@ -321,7 +321,9 @@ const styles = createStyles(() => ({
   segOn: { backgroundColor: colors.white, boxShadow: '0 1px 3px rgba(21,23,28,0.12)' },
   lines: { gap: 12, paddingVertical: 4 },
   actions: { flexDirection: 'row', gap: 10 },
-  bubble: { maxWidth: '82%', paddingVertical: 12, paddingHorizontal: 14, gap: 4 },
+  // 재생 중 강조는 바깥 윤곽선(outline) 대신 말풍선 안쪽 테두리로 그린다. 바깥으로 그리면 화면 가장자리에서 잘려 안 보인다.
+  // 테두리가 1px→2px로 굵어지는 만큼 안쪽 여백을 줄여 글자 위치와 말풍선 크기는 그대로 둔다
+  bubble: { maxWidth: '82%', paddingVertical: 11, paddingHorizontal: 13, gap: 4, borderWidth: 1 },
   bubbleA: {
     backgroundColor: colors.white,
     borderWidth: 1,
@@ -333,6 +335,7 @@ const styles = createStyles(() => ({
   },
   bubbleB: {
     backgroundColor: colors.heroBg,
+    borderColor: colors.heroBg,
     borderTopLeftRadius: 18,
     borderTopRightRadius: 6,
     borderBottomLeftRadius: 18,
@@ -350,7 +353,7 @@ const styles = createStyles(() => ({
     borderColor: colors.border,
   },
   playAllOn: { backgroundColor: colors.accent, borderColor: colors.accent },
-  bubbleActive: { outlineWidth: 2, outlineStyle: 'solid', outlineColor: colors.accent, outlineOffset: 2 },
+  bubbleActive: { borderWidth: 2, borderColor: colors.accent, paddingVertical: 10, paddingHorizontal: 12 },
   hidden: { paddingHorizontal: 10, borderRadius: 8, borderWidth: 1, borderStyle: 'dashed', alignSelf: 'flex-start' },
   hiddenLight: { backgroundColor: colors.hiddenBg, borderColor: colors.hiddenBorder },
   hiddenDark: { backgroundColor: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.28)' },
