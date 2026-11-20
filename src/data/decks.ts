@@ -150,9 +150,36 @@ export const applySetSize = (n: unknown) => {
 };
 export const getSetSize = () => currentSetSize;
 
-export const setCount = (deck: CardDeckId) => Math.ceil(cardDecks[deck].length / currentSetSize);
+// 가나는 개수가 아니라 흔히 쓰는 분류(청음·탁음·반탁음·요음)로 세트를 나눈다. 세트 크기 설정과 무관하다
+const kanaGroups: Card[][] = [];
+const kanaGroupNames: string[] = [];
+for (const c of kana) {
+  const i = kanaGroupNames.indexOf(c.tag);
+  if (i < 0) {
+    kanaGroupNames.push(c.tag);
+    kanaGroups.push([c]);
+  } else kanaGroups[i].push(c);
+}
 
-export const setCards = (deck: CardDeckId, set: number) => cardDecks[deck].slice(set * currentSetSize, (set + 1) * currentSetSize);
+export const setCount = (deck: CardDeckId) => (deck === 'kana' ? kanaGroups.length : Math.ceil(cardDecks[deck].length / currentSetSize));
+
+export const setCards = (deck: CardDeckId, set: number) =>
+  deck === 'kana' ? (kanaGroups[set] ?? []) : cardDecks[deck].slice(set * currentSetSize, (set + 1) * currentSetSize);
+
+// 세트 이름: 가나는 분류 이름(예: 히라가나 청음), 나머지는 "N세트"
+export const setTitle = (deck: CardDeckId, set: number) => (deck === 'kana' ? (kanaGroupNames[set] ?? '').replace('·', ' ') : `${set + 1}세트`);
+
+// 세트 카드가 덱 전체에서 차지하는 번호 범위 (1부터)
+export const setRange = (deck: CardDeckId, set: number): [number, number] => {
+  if (deck === 'kana') {
+    const start = kanaGroups.slice(0, set).reduce((n, g) => n + g.length, 0);
+    return [start + 1, start + (kanaGroups[set]?.length ?? 0)];
+  }
+  return [set * currentSetSize + 1, set * currentSetSize + setCards(deck, set).length];
+};
+
+// "세트 크기" 설정이 적용되는 덱인지 (가나는 분류로 고정)
+export const usesSetSize = (deck: CardDeckId) => deck !== 'kana';
 
 // 카드를 읽어 줄 때 쓰는 문자열. 음성 파일(scripts/generate-audio.cjs)도 같은 규칙으로 문구를 모은다.
 // 단어·문형·가나는 표기(front), 문장은 일본어 정답(back). 05 단계에서 표기/읽기 기준을 확정하면 여기만 바꾼다

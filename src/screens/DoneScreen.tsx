@@ -3,7 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bar, Btn, Chip, IconButton } from '../components/Bits';
 import { Txt } from '../components/Txt';
-import { cardDecks, deckMeta } from '../data/decks';
+import { cardDecks, deckMeta, setTitle } from '../data/decks';
 import { RoundResult } from '../progress';
 import { colors, createStyles } from '../theme';
 
@@ -33,7 +33,7 @@ export function DoneScreen({ result, onNext, onBack }: Props) {
       </View>
 
       <View style={{ gap: 10 }}>
-        <Chip label={`${meta.name} · ${result.set + 1}세트`} bg={meta.soft} fg={meta.deep} />
+        <Chip label={`${meta.name} · ${setTitle(result.deck, result.set)}`} bg={meta.soft} fg={meta.deep} />
         <Txt size={38} weight={700} lineHeight={1.1} style={{ letterSpacing: -1.14 }}>
           {`${result.round}회독 완료`}
         </Txt>

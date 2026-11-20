@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Bar, Btn, Chip, IconButton } from '../components/Bits';
 import { CheckIcon, CloseIcon } from '../components/Icons';
 import { Txt } from '../components/Txt';
-import { CardDeckId, deckMeta } from '../data/decks';
+import { CardDeckId, deckMeta, setTitle } from '../data/decks';
 import { ReadingMode } from '../progress';
 import { Question, makeQuiz } from '../quiz';
 import { colors, createStyles } from '../theme';
@@ -89,7 +89,7 @@ export function QuizScreen({ deck, set, onAnswer, onFinish, onBack, reading }: P
           <IconButton label="세트 목록으로" kind="close" onPress={onBack} />
         </View>
         <View style={{ gap: 10 }}>
-          <Chip label={`${meta.name} · ${set + 1}세트 퀴즈`} bg={meta.soft} fg={meta.deep} />
+          <Chip label={`${meta.name} · ${setTitle(deck, set)} 퀴즈`} bg={meta.soft} fg={meta.deep} />
           <Txt size={38} weight={700} lineHeight={1.1} style={{ letterSpacing: -1.14 }}>
             {`${total}문제 중 ${score}개 정답`}
           </Txt>
@@ -127,7 +127,7 @@ export function QuizScreen({ deck, set, onAnswer, onFinish, onBack, reading }: P
         <IconButton label="세트 목록으로" onPress={onBack} />
         <View style={{ flex: 1, gap: 2 }}>
           <Txt size={16} weight={600}>
-            {`${meta.name} · ${set + 1}세트 퀴즈`}
+            {`${meta.name} · ${setTitle(deck, set)} 퀴즈`}
           </Txt>
           <Txt size={12} color={colors.muted}>
             {KIND_LABEL[q.kind]}

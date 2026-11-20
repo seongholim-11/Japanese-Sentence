@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Bar, Btn, IconButton } from '../components/Bits';
 import { Txt } from '../components/Txt';
-import { CardDeckId, cardDecks, deckMeta, getSetSize, setCards, setCount } from '../data/decks';
+import { CardDeckId, cardDecks, deckMeta, getSetSize, setCards, setCount, setRange, setTitle, usesSetSize } from '../data/decks';
 import { Progress, SetRef, roundState, setKey } from '../progress';
 import { weakIds } from '../weak';
 import { colors, createStyles } from '../theme';
@@ -48,7 +48,7 @@ export function SetsScreen({ deck, progress, onStudy, onQuiz, onWeak, onBack }: 
             {meta.name}
           </Txt>
           <Txt size={12} color={colors.muted}>
-            {`${withCommas(total)}장 · ${getSetSize()}장씩 ${count}세트`}
+            {usesSetSize(deck) ? `${withCommas(total)}장 · ${getSetSize()}장씩 ${count}세트` : `${withCommas(total)}장 · 청음·탁음·반탁음·요음 ${count}세트`}
           </Txt>
         </View>
         <Txt size={15} weight={600} tabular>
@@ -80,12 +80,14 @@ export function SetsScreen({ deck, progress, onStudy, onQuiz, onWeak, onBack }: 
             >
               <View style={styles.top}>
                 <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 10 }}>
-                  <Txt size={30} weight={700} color={complete ? meta.deep : colors.ink} tabular style={{ letterSpacing: -0.9 }}>
-                    {String(set + 1)}
+                  <Txt size={usesSetSize(deck) ? 30 : 22} weight={700} color={complete ? meta.deep : colors.ink} tabular style={{ letterSpacing: -0.9 }}>
+                    {usesSetSize(deck) ? String(set + 1) : setTitle(deck, set)}
                   </Txt>
-                  <Txt size={13} color={colors.muted} tabular>
-                    {`${set * getSetSize() + 1}–${set * getSetSize() + cards.length}`}
-                  </Txt>
+                  {usesSetSize(deck) && (
+                    <Txt size={13} color={colors.muted} tabular>
+                      {`${setRange(deck, set)[0]}–${setRange(deck, set)[1]}`}
+                    </Txt>
+                  )}
                 </View>
                 <Txt size={12} weight={500} color={colors.muted} tabular>
                   {`${started ? `${round}회독 · ` : ''}${done} / ${cards.length}장`}

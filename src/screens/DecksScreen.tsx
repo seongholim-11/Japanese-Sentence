@@ -18,7 +18,7 @@ type Props = {
 };
 
 const detail = (d: DeckMeta, p: Progress) =>
-  d.id === 'dialogue' ? `${p.dialogue.round}회독 중` : `${setCount(d.id)}세트 · ${getSetSize()}장씩`;
+  d.id === 'dialogue' ? `${p.dialogue.round}회독 중` : d.id === 'kana' ? `${setCount(d.id)}세트 · 청음·탁음·요음` : `${setCount(d.id)}세트 · ${getSetSize()}장씩`;
 
 export function DecksScreen({ progress, onOpenDeck, onSearch, onNavigate }: Props) {
   const insets = useSafeAreaInsets();

@@ -105,7 +105,7 @@ export function StudyScreen({ deck, title, subtitle, queue, pos, revealed, rate,
         </View>
         <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.tapArea}>
-        <Pressable accessibilityRole="button" accessibilityHint={revealed ? '누르면 카드를 다시 가려요' : '누르면 뜻과 예문을 보여 줘요'} onPress={onToggle} style={styles.tapContent}>
+        <Pressable accessibilityRole="button" accessibilityHint={revealed ? '누르면 카드를 다시 가려요' : '누르면 뜻과 예문을 보여 줘요'} onPress={onToggle} style={styles.tapFront}>
         <View style={styles.front}>
           <Txt size={meta.bigFront ? (compact ? 36 : 44) : compact ? 24 : 28} weight={700} lineHeight={1.2} style={{ letterSpacing: meta.bigFront ? -0.88 : -0.56 }}>
             {card.front}
@@ -122,7 +122,9 @@ export function StudyScreen({ deck, title, subtitle, queue, pos, revealed, rate,
             </Txt>
           ) : null}
         </View>
+        </Pressable>
         {revealed ? (
+        <Pressable accessibilityRole="button" accessibilityHint="누르면 카드를 다시 가려요" onPress={onToggle} style={styles.tapContent}>
           <View style={{ gap: compact ? 8 : 12 }}>
             <DashedLine />
             <View style={{ gap: compact ? 8 : 12, paddingTop: compact ? 0 : 6 }}>
@@ -151,8 +153,8 @@ export function StudyScreen({ deck, title, subtitle, queue, pos, revealed, rate,
               ) : null}
             </View>
           </View>
-        ) : null}
         </Pressable>
+        ) : null}
         {revealed && (hasExample || (isSentence && card.note)) ? <View style={{ paddingTop: compact ? 8 : 12 }}>
           <View style={styles.example}>
             <View style={styles.exampleText}>
@@ -189,7 +191,6 @@ export function StudyScreen({ deck, title, subtitle, queue, pos, revealed, rate,
             ) : null}
           </View>
         </View> : null}
-        <Pressable accessible={false} focusable={false} onPress={onToggle} style={{ flexGrow: 1 }} />
         </View>
         </ScrollView>
         <View style={styles.cardButtons}>
@@ -271,11 +272,13 @@ const styles = createStyles(() => ({
   // 내용이 짧으면 스크롤 없이 카드를 채우고, 길어서 넘칠 때만 스크롤된다
   scroll: { flex: 1, minHeight: 0 },
   scrollContent: { flexGrow: 1 },
+  // 뜻·예문은 카드 아래쪽(뜻 보기 버튼 바로 위)에 붙고, 낱말은 남는 공간 가운데에 둔다
   tapArea: { flexGrow: 1 },
+  tapFront: { flexGrow: 1, justifyContent: 'center' },
   tapContent: { gap: 12 },
   reveal: { backgroundColor: colors.exampleBg },
   cardButtons: { flexDirection: 'row', gap: 8 },
-  front: { flex: 1, justifyContent: 'center', gap: 10 },
+  front: { justifyContent: 'center', gap: 10, paddingVertical: 8 },
   example: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 12, borderRadius: 14, backgroundColor: colors.exampleBg },
   exampleText: { flex: 1, minWidth: 0, gap: 4 },
   exampleBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.accentTint },

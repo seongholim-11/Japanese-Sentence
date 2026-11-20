@@ -6,7 +6,7 @@ import { Bar, Btn } from '../components/Bits';
 import { BottomNav, Tab } from '../components/BottomNav';
 import { ArrowRightIcon, FlameIcon } from '../components/Icons';
 import { Txt } from '../components/Txt';
-import { DeckId, DeckMeta, cardDecks, deckMeta, decks } from '../data/decks';
+import { DeckId, DeckMeta, cardDecks, deckMeta, decks, setTitle } from '../data/decks';
 import { dialogues } from '../data/dialogues';
 import { Progress, SetRef, dueIds, roundState, todayCount, visibleStreak } from '../progress';
 import { colors, createStyles } from '../theme';
@@ -27,7 +27,7 @@ const continueOf = (p: Progress): { label: string; set: SetRef | null; deck: Dec
   const name = deckMeta(p.lastDeck).name;
   if (p.lastSet?.deck === p.lastDeck) {
     const round = roundState(p, p.lastSet).round;
-    return { label: `${name} ${p.lastSet.set + 1}세트 ${round}회독 이어서`, set: p.lastSet, deck: p.lastDeck };
+    return { label: `${name} ${p.lastSet.deck === 'kana' ? setTitle('kana', p.lastSet.set) : `${p.lastSet.set + 1}세트`} ${round}회독 이어서`, set: p.lastSet, deck: p.lastDeck };
   }
   return { label: `${name} 공부 시작`, set: null, deck: p.lastDeck };
 };

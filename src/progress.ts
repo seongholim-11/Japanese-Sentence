@@ -583,7 +583,15 @@ export function useProgress() {
   const setSetSize = useCallback(
     (n: number) => {
       applySetSize(n);
-      update((p) => ({ ...p, prefs: { ...p.prefs, setSize: validSetSize(n) }, sets: {}, quiz: {}, lastSet: null }));
+      // 가나는 분류로 고정된 세트라 세트 크기와 무관하므로 가나 기록은 남긴다
+      const keepKana = <T,>(o: Record<string, T>) => Object.fromEntries(Object.entries(o).filter(([k]) => k.startsWith('kana:')));
+      update((p) => ({
+        ...p,
+        prefs: { ...p.prefs, setSize: validSetSize(n) },
+        sets: keepKana(p.sets),
+        quiz: keepKana(p.quiz),
+        lastSet: p.lastSet?.deck === 'kana' ? p.lastSet : null,
+      }));
     },
     [update],
   );

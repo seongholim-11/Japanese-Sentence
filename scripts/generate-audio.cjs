@@ -163,6 +163,20 @@ async function synthesize(text, voiceName, attempt = 0, say) {
   return Buffer.from(j.audioContent, 'base64');
 }
 
+// 한 글자·두세 글자는 같은 입력이어도 가끔 거의 빈 소리(1KB 안팎)가 돌아온다. 정상 길이가 나올 때까지 몇 번 다시 만들고, 끝내 안 되면 가장 긴 것을 쓴다
+const SHORT_LEN = 3;
+const SHORT_OK_BYTES = 3000;
+const isShort = (text) => [...text].length <= SHORT_LEN;
+async function synthesizeChecked(text, voiceName, say) {
+  let best = await synthesize(text, voiceName, 0, say);
+  if (!isShort(text)) return best;
+  for (let i = 0; i < 8 && best.length < SHORT_OK_BYTES; i++) {
+    const again = await synthesize(text, voiceName, 0, say);
+    if (again.length > best.length) best = again;
+  }
+  return best;
+}
+
 async function pool(items, size, worker) {
   let i = 0;
   await Promise.all(
@@ -213,7 +227,12 @@ async function main() {
   const scope = val('scope', 'all');
   const all = collectItems(scope);
   const index = readIndex();
-  const have = (x) => index.files[keyOf(x.voice, x.text)] && fs.existsSync(path.join(OUT_DIR, index.files[keyOf(x.voice, x.text)]));
+  // --redo-short: 짧은 문구 중 파일이 비정상적으로 작은(거의 빈 소리) 것은 없는 것으로 보고 다시 만든다
+  const tooSmall = (f) => flag('redo-short') && fs.statSync(path.join(OUT_DIR, f)).size < 2500;
+  const have = (x) => {
+    const f = index.files[keyOf(x.voice, x.text)];
+    return f && fs.existsSync(path.join(OUT_DIR, f)) && !(isShort(x.text) && tooSmall(f));
+  };
   const todo = all.filter((x) => !have(x));
   const total = chars(all);
   const need = chars(todo);
@@ -289,7 +308,7 @@ async function main() {
   const t0 = Date.now();
   await pool(todo, 3, async (item) => {
     try {
-      const buf = await synthesize(item.text, VOICES[item.voice], 0, item.say);
+      const buf = await synthesizeChecked(item.text, VOICES[item.voice], item.say);
       const f = fileFor(item.voice, item.text);
       fs.writeFileSync(path.join(OUT_DIR, f), buf);
       index.files[keyOf(item.voice, item.text)] = f;

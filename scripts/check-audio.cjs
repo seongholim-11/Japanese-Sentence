@@ -45,6 +45,8 @@ for (const [key, kind] of need) {
   if (!f || !fs.existsSync(path.join(OUT, f))) { missing++; if (missing <= 15) console.log(`누락: ${key} (${kind})`); continue; }
   const st = fs.statSync(path.join(OUT, f));
   if (st.size < 500) { empty++; console.log(`빈 파일: ${f} ${key}`); }
+  // 한두 글자 문구는 합성이 가끔 거의 빈 소리(1KB 안팎)로 나온다. 정상은 3KB 안팎이라 2.5KB 미만이면 다시 만든다 (npm run audio -- --redo-short)
+  else if ([...key.split('|').slice(1).join('|')].length <= 3 && st.size < 2500) { empty++; console.log(`너무 짧은 소리: ${f} ${key} ${st.size}B`); }
   used.add(f);
 }
 const onDisk = fs.readdirSync(OUT).filter((f) => f.endsWith('.mp3'));
